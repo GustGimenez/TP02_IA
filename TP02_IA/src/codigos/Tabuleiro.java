@@ -5,6 +5,7 @@
  */
 package codigos;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -54,13 +55,13 @@ public class Tabuleiro {
         if (this.zeroL > 0) {
             jogadas[cont++] = this.CIMA;
         }
-        if (this.zeroL < this.lin-1) {
+        if (this.zeroL < this.lin - 1) {
             jogadas[cont++] = this.BAIXO;
         }
         if (this.zeroC > 0) {
             jogadas[cont++] = this.ESQUERDA;
         }
-        if (this.zeroC < this.col-1) {
+        if (this.zeroC < this.col - 1) {
             jogadas[cont++] = this.DIREITA;
         }
 
@@ -106,14 +107,36 @@ public class Tabuleiro {
         while (!this.verificaFim()) {
             this.getJogadas(jogadas);
             aux = jogadas[0];
-            auxJog = (int) (rand.nextInt(aux-1)+1);
-            this.fazJogada(jogadas[auxJog]);
+            auxJog = (int) (rand.nextInt(aux - 1) + 1);
+            this.fazJogada(jogadas[auxJog], this.tab);
             this.numJogadas++;
         }
     }
 
     public void buscaH1() {
-
+        ArrayList<Integer> historico = new ArrayList();
+        this.numJogadas = 0;
+        int[] jogadas = new int[5];
+        int[][] tabAux = new int[this.lin][this.col];
+        int aux, auxJog = 0, min, numAux;
+        
+        while (!this.verificaFim()) {
+            this.getJogadas(jogadas);
+            aux = jogadas[0];
+            min = Integer.MAX_VALUE;
+            for (int i = 1; i < aux; i++) {
+                this.copyArray(tab, tabAux);
+                this.fazJogada(jogadas[i], tabAux);
+                numAux = this.verificaDistancia(tabAux);
+                if (numAux < min) {
+                    auxJog = i;
+                    min = numAux;
+                }
+            }
+            this.verificaLoop(historico, jogadas[auxJog]);
+            this.fazJogada(jogadas[auxJog], this.tab);
+            this.numJogadas++;
+        }
     }
 
     public void buscaH2() {
@@ -131,8 +154,8 @@ public class Tabuleiro {
         for (int i = 0; i < num; i++) {
             this.getJogadas(jogadas);
             aux = jogadas[0];
-            auxJog = (int) (rand.nextInt(aux-1)+1);
-            this.fazJogada(jogadas[auxJog]);
+            auxJog = (int) (rand.nextInt(aux - 1) + 1);
+            this.fazJogada(jogadas[auxJog],this.tab);
         }
     }
 
@@ -147,35 +170,45 @@ public class Tabuleiro {
         this.tab[this.zeroC][this.zeroL] = -1;
     }
 
-    private void fazJogada(int jog) {
+    private void fazJogada(int jog, int[][] tab) {
         int aux;
-        aux = this.tab[this.zeroL][this.zeroC];
+        aux = tab[this.zeroL][this.zeroC];
         switch (jog) {
             case CIMA:
-                this.tab[this.zeroL][this.zeroC] = this.tab[this.zeroL - 1][this.zeroC];
-                this.tab[--this.zeroL][this.zeroC] = aux;
+                tab[this.zeroL][this.zeroC] = tab[this.zeroL - 1][this.zeroC];
+                tab[--this.zeroL][this.zeroC] = aux;
                 break;
             case BAIXO:
-                this.tab[this.zeroL][this.zeroC] = this.tab[this.zeroL + 1][this.zeroC];
-                this.tab[++this.zeroL][this.zeroC] = aux;
+                tab[this.zeroL][this.zeroC] = tab[this.zeroL + 1][this.zeroC];
+                tab[++this.zeroL][this.zeroC] = aux;
                 break;
             case DIREITA:
-                this.tab[this.zeroL][this.zeroC] = this.tab[this.zeroL][this.zeroC + 1];
-                this.tab[this.zeroL][++this.zeroC] = aux;
+                tab[this.zeroL][this.zeroC] = tab[this.zeroL][this.zeroC + 1];
+                tab[this.zeroL][++this.zeroC] = aux;
                 break;
             case ESQUERDA:
-                this.tab[this.zeroL][this.zeroC] = this.tab[this.zeroL][this.zeroC - 1];
-                this.tab[this.zeroL][--this.zeroC] = aux;
+                tab[this.zeroL][this.zeroC] = tab[this.zeroL][this.zeroC - 1];
+                tab[this.zeroL][--this.zeroC] = aux;
                 break;
         }
     }
-    
-    public void exibe(){
+
+    public void exibe() {
         for (int i = 0; i < this.lin; i++) {
             for (int j = 0; j < this.col; j++) {
-                System.out.print(this.tab[i][j] +" ");
+                System.out.print(this.tab[i][j] + " ");
             }
             System.out.println("");
         }
+    }
+
+    private void copyArray(int[][] array, int[][] arrayCpy) {
+        for (int i = 0; i < array.length; i++) {
+            System.arraycopy(array[i], 0, arrayCpy[i], 0, array[i].length);
+        }
+    }
+
+    private void verificaLoop(ArrayList<Integer> historico, int jogada) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

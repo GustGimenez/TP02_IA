@@ -17,7 +17,7 @@ public class main {
         tab.embaralha(50);
         tab.exibe();
         System.out.println("------------------");
-        tab.buscaCega();
+        tab.buscaH1();
         tab.exibe();
         System.out.println("------------------");
         System.out.println(tab.getNumJogadas());
