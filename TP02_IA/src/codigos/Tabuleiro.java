@@ -15,6 +15,7 @@ import java.util.Random;
 public class Tabuleiro {
 
     private final int[][] tab;
+    private final ArrayList<Integer> jogBanidas;
     private int zeroL;
     private int zeroC;
     private int numJogadas;
@@ -46,22 +47,22 @@ public class Tabuleiro {
         this.tab = new int[lin][col];
         this.lin = lin;
         this.col = col;
-
+        this.jogBanidas = new ArrayList();
         this.resetTab();
     }
 
     private void getJogadas(int[] jogadas) {
         int cont = 1;
-        if (this.zeroL > 0) {
+        if (this.zeroL > 0 && !this.jogBanidas.contains(this.CIMA)) {
             jogadas[cont++] = this.CIMA;
         }
-        if (this.zeroL < this.lin - 1) {
+        if (this.zeroL < this.lin - 1 && !this.jogBanidas.contains(this.BAIXO)) {
             jogadas[cont++] = this.BAIXO;
         }
-        if (this.zeroC > 0) {
+        if (this.zeroC > 0 && !this.jogBanidas.contains(this.ESQUERDA)) {
             jogadas[cont++] = this.ESQUERDA;
         }
-        if (this.zeroC < this.col - 1) {
+        if (this.zeroC < this.col - 1 && !this.jogBanidas.contains(this.DIREITA)) {
             jogadas[cont++] = this.DIREITA;
         }
 
@@ -119,7 +120,7 @@ public class Tabuleiro {
         int[] jogadas = new int[5];
         int[][] tabAux = new int[this.lin][this.col];
         int aux, auxJog = 0, min, numAux;
-        
+
         while (!this.verificaFim()) {
             this.getJogadas(jogadas);
             aux = jogadas[0];
@@ -133,7 +134,14 @@ public class Tabuleiro {
                     min = numAux;
                 }
             }
-            this.verificaLoop(historico, jogadas[auxJog]);
+
+            if (this.verificaLoop(historico, jogadas[auxJog])) {
+                this.jogBanidas.add(jogadas[auxJog]);
+                continue;
+            } else {
+                this.jogBanidas.removeAll(this.jogBanidas);
+            }
+
             this.fazJogada(jogadas[auxJog], this.tab);
             this.numJogadas++;
         }
@@ -155,7 +163,7 @@ public class Tabuleiro {
             this.getJogadas(jogadas);
             aux = jogadas[0];
             auxJog = (int) (rand.nextInt(aux - 1) + 1);
-            this.fazJogada(jogadas[auxJog],this.tab);
+            this.fazJogada(jogadas[auxJog], this.tab);
         }
     }
 
@@ -208,7 +216,64 @@ public class Tabuleiro {
         }
     }
 
-    private void verificaLoop(ArrayList<Integer> historico, int jogada) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private boolean verificaLoop(ArrayList<Integer> historico, int jogada) {
+        int num = this.lin * this.col;
+        if (num % 2 == 1) {
+            num--;
+        }
+        if (historico.size() > num * num - 1) {
+            historico.remove(0);
+        }
+        historico.add(this.getPeca(jogada));
+        for (int i = 2; i < this.lin * this.col; i = i + 2) {
+            if (i * i - 1 > historico.size()) {
+                return false;
+            }
+            if (checaLoop(historico, i)) {
+                historico.remove(historico.size() - 1);
+                return true;
+            }
+        }
+        return false;
     }
+
+    private boolean checaLoop(ArrayList<Integer> historico, int num) {
+        int n1 = num - 1;
+        int n2 = num * n1;
+        int offset = historico.size() - n2 - 1;
+        int[][] jogadas = new int[num][n1];
+        int aux;
+        for (int i = 0; i < n2; i = i + n1) {
+            aux = i / n1;
+            for (int j = i; j < i + n1; j++) {
+                jogadas[aux][j - i] = historico.get(offset + j);
+            }
+        }
+
+        for (int i = 0; i < n1; i++) {
+            aux = jogadas[0][i];
+            for (int j = 1; j < num; j++) {
+                if (jogadas[j][i] != aux) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private int getPeca(int direcao) {
+        switch (direcao) {
+            case CIMA:
+                return this.tab[this.zeroL - 1][this.zeroC];
+            case BAIXO:
+                return this.tab[this.zeroL + 1][this.zeroC];
+            case DIREITA:
+                return this.tab[this.zeroL][this.zeroC + 1];
+            case ESQUERDA:
+                return this.tab[this.zeroL][this.zeroC - 1];
+            default:
+                return -1;
+        }
+    }
+
 }
