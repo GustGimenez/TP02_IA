@@ -15,7 +15,7 @@ public class main {
         int[][] tabOriginal = new int[3][3];
         tab.exibe();
         System.out.println("------------------");
-        tab.embaralha(50);
+        tab.embaralha(500);
         tab.copyArray(tab.getTab(), tabOriginal);
         tab.exibe();
         System.out.println("--------EXECUÇÃO H1----------");

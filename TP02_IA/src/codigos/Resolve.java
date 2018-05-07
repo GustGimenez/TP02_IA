@@ -21,6 +21,7 @@ public class Resolve {
     private int numJogadas;
     private final int lin;
     private final int col;
+    private Tabuleiro result;
 
     private final int CIMA = 0;
     private final int BAIXO = 1;
@@ -180,9 +181,9 @@ public class Resolve {
             }
 
         }
-
+        this.result = atual;
         int passos = this.getPassos(atual);
-        System.out.println(passos);
+        System.out.println("Passos: " + passos + "\nIt: " + this.numJogadas);
 
     }
 
@@ -190,6 +191,7 @@ public class Resolve {
         ArrayList<Tabuleiro> tabs = new ArrayList();
         this.numJogadas = 0;
         int[] jogadas = new int[5];
+        this.atualizaZero();
         this.getJogadas(jogadas, this.zeroL, this.zeroC);
         int auxJog;
         int[][] arrayAux = new int[this.lin][this.col];
@@ -236,8 +238,9 @@ public class Resolve {
 
         }
 
+        this.result = atual;
         int passos = this.getPassos(atual);
-        System.out.println(passos);
+        System.out.println("Passos: " + passos + "\nIt: " + this.numJogadas);
 
     }
 
@@ -307,27 +310,6 @@ public class Resolve {
         }
     }
 
-    private boolean verificaLoop(ArrayList<Integer> historico, int jogada) {
-        int num = this.lin * this.col;
-        if (num % 2 == 1) {
-            num--;
-        }
-        if (historico.size() > 2 * (num - 1)) {
-            historico.remove(0);
-        }
-        historico.add(this.getPeca(jogada));
-        for (int i = 2; i < this.lin * this.col; i = i + 2) {
-            if (i * i - 1 > historico.size()) {
-                return false;
-            }
-            if (checaLoop(historico, i)) {
-                historico.remove(historico.size() - 1);
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean checaLoop(ArrayList<Integer> historico, int num) {
         int n1 = num - 1;
         int n2 = 2 * n1;
@@ -350,21 +332,6 @@ public class Resolve {
             }
         }
         return true;
-    }
-
-    private int getPeca(int direcao) {
-        switch (direcao) {
-            case CIMA:
-                return this.tab[this.zeroL - 1][this.zeroC];
-            case BAIXO:
-                return this.tab[this.zeroL + 1][this.zeroC];
-            case DIREITA:
-                return this.tab[this.zeroL][this.zeroC + 1];
-            case ESQUERDA:
-                return this.tab[this.zeroL][this.zeroC - 1];
-            default:
-                return -1;
-        }
     }
 
     private ArrayList<Integer> ordenaJogadas(int[] jogadas) {
@@ -428,39 +395,45 @@ public class Resolve {
 
     private ArrayList<Integer> ordenaJogadasH2(int[] jogadas) {
         ArrayList<Integer> jogs = new ArrayList();
-        int aux = jogadas[0];
-        int[][] mat = new int[aux - 1][2];
-        int[][] tabAux = new int[this.lin][this.col];
-        int[][] tabAux2 = new int[this.lin][this.col];
-        int[] zeroLC, jogadasAux = new int[5];
-        int min, minAux;
+        int aux = jogadas[0]; // Numero de jogadas +1
+        int[][] mat = new int[aux - 1][2]; // Matriz que ajuda organizar jogadas
+        int[][] tabAux = new int[this.lin][this.col];  // Tabuleiro que simulará a primeira jogada
+        int[][] tabAux2 = new int[this.lin][this.col];   // Tabuleiro que simulará a segunda jogada
+        int[] zeroLC;// Coordenadas do zero apos a primeira jogada
+        int[] jogadasAux = new int[5]; // Vetor com os possiveis movimentos para segunda jogada
+        int min, minAux; //auxiliares para calcular o menor valor da segunda jogada
+
         for (int i = 1; i < aux; i++) {
             //Uma jogada a frente
-            this.copyArray(this.tab, tabAux);
-            this.fazJogada(jogadas[i], tabAux, zeroL, zeroC);
-            if (this.verificaDistancia(tabAux) == 0) {
+            this.copyArray(this.tab, tabAux); // Copia pra não perder o tabuleiro
+            this.fazJogada(jogadas[i], tabAux, zeroL, zeroC); // simula um movimento
+            if (this.verificaDistancia(tabAux) == 0) { //verifica se o movimento gerá uma solução
                 mat[i - 1][0] = jogadas[i];
                 mat[i - 1][1] = 0;
                 continue;
             }
-            zeroLC = this.getZero(tabAux);
-            this.getJogadas(jogadasAux, zeroLC[0], zeroLC[1]);
+
+            zeroLC = this.getZero(tabAux); // pega coordenadas do zero no tabuleiro após a jogada
+            this.getJogadas(jogadasAux, zeroLC[0], zeroLC[1]); // Verifica quais movimentos estão disponíveis
             //Duas jogadas A frente
             min = Integer.MAX_VALUE;
             for (int j = 1; j < jogadasAux[0]; j++) {
 
-                this.copyArray(tabAux, tabAux2);
-                this.fazJogada(jogadasAux[j], tabAux2, zeroLC[0], zeroLC[1]);
-                minAux = this.verificaDistancia(tabAux2);
-                if (minAux < min) {
+                this.copyArray(tabAux, tabAux2); // copia para não perder tabuleiro
+                this.fazJogada(jogadasAux[j], tabAux2, zeroLC[0], zeroLC[1]); // simula um movimento
+                minAux = this.verificaDistancia(tabAux2); // verifica a distancia do tabuleiro após duas jogadas
+
+                if (minAux < min) { // Armazena o melhor resultado que esse tabuleiro pode atingir
                     min = minAux;
                 }
             }
-            mat[i - 1][0] = jogadas[i];
-            mat[i - 1][1] = min;
+            mat[i - 1][0] = jogadas[i]; // Armazena a jogada
+            mat[i - 1][1] = min; // melhor resultados após 2 movimentos da jogada acima
         }
 
-        bubbleJogadas(mat);
+        bubbleJogadas(mat); // ordena jogadas
+
+        //Adiciona no arraylist
         for (int i = 1; i < aux; i++) {
             jogs.add(mat[i - 1][0]);
         }
