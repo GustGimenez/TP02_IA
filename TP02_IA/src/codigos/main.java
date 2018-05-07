@@ -11,7 +11,7 @@ package codigos;
  */
 public class main {
     public static void main(String[] args) {
-        Tabuleiro tab = new Tabuleiro(3,3);
+        Resolve tab = new Resolve(3,3);
         tab.exibe();
         System.out.println("------------------");
         tab.embaralha(50);
