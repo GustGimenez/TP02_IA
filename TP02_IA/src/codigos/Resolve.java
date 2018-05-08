@@ -44,6 +44,16 @@ public class Resolve {
         return numJogadas;
     }
 
+    public int getLin() {
+        return lin;
+    }
+
+    public int getCol() {
+        return col;
+    }
+    
+    
+
     public Resolve(int lin, int col) {
         this.tab = new int[lin][col];
         this.lin = lin;
@@ -245,7 +255,59 @@ public class Resolve {
     }
 
     public void buscaHPessoal() {
+        ArrayList<Tabuleiro> tabs = new ArrayList();
+        this.numJogadas = 0;
+        int[] jogadas = new int[5];
+        this.getJogadas(jogadas, this.zeroL, this.zeroC);
+        int auxJog;
+        int[][] arrayAux = new int[this.lin][this.col];
+        this.copyArray(tab, arrayAux);
+        Tabuleiro anterior = null;
+        Tabuleiro atual = new Tabuleiro(arrayAux, this.ordenaJogadasHP(jogadas));
+        tabs.add(atual);
+        atual.setPai(null);
 
+        while (!this.verificaFim()) {
+            auxJog = atual.getJogada();
+            if (auxJog == -1) {
+                for (Tabuleiro t : tabs) {
+                    if (t.getJogadas().size() > 0) {
+                        atual = t;
+                        this.copyArray(atual.getTab(), this.tab);
+                        this.atualizaZero();
+                        break;
+                    }
+                }
+                continue;
+            }
+            this.fazJogada(auxJog, this.tab, this.zeroL, this.zeroC);
+            this.numJogadas++;
+            this.atualizaZero(auxJog);
+
+            //Prepara pra próxima iteração
+            arrayAux = new int[this.lin][this.col];
+            this.copyArray(this.tab, arrayAux);
+            anterior = atual;
+            atual = null;
+            for (Tabuleiro t : tabs) {
+                if (t.igual(arrayAux)) {
+                    atual = t;
+                    break;
+                }
+            }
+            this.getJogadas(jogadas, this.zeroL, this.zeroC);
+            if (atual == null) {
+                atual = new Tabuleiro(arrayAux, this.ordenaJogadasHP(jogadas));
+                atual.setPai(anterior);
+                tabs.add(atual);
+            }
+
+        }
+        this.result = atual;
+        int passos = this.getPassos(atual);
+        System.out.println("Passos: " + passos + "\nIt: " + this.numJogadas);
+
+    
     }
 
     public void embaralha(int num) {
@@ -308,30 +370,6 @@ public class Resolve {
         for (int i = 0; i < array.length; i++) {
             System.arraycopy(array[i], 0, arrayCpy[i], 0, array[i].length);
         }
-    }
-
-    private boolean checaLoop(ArrayList<Integer> historico, int num) {
-        int n1 = num - 1;
-        int n2 = 2 * n1;
-        int offset = historico.size() - n2;
-        int[][] jogadas = new int[2][n1];
-        int aux;
-        for (int i = 0; i < 2; i = i + n1) {
-            aux = i / n1;
-            for (int j = i; j < i + n1; j++) {
-                jogadas[aux][j - i] = historico.get(offset + j);
-            }
-        }
-
-        for (int i = 0; i < n1; i++) {
-            aux = jogadas[0][i];
-            for (int j = 1; j < 2; j++) {
-                if (jogadas[j][i] != aux) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     private ArrayList<Integer> ordenaJogadas(int[] jogadas) {
@@ -454,5 +492,38 @@ public class Resolve {
             }
         }
         return null;
+    }
+
+    private ArrayList<Integer> ordenaJogadasHP(int[] jogadas) {// Basea-se no numeros de peças fora do lugar
+        ArrayList<Integer> jogs = new ArrayList();
+        int aux = jogadas[0];
+        int[][] mat = new int[aux - 1][2];
+        int[][] tabAux = new int[this.lin][this.col];
+
+        for (int i = 1; i < aux; i++) {
+            this.copyArray(this.tab, tabAux);
+            this.fazJogada(jogadas[i], tabAux, zeroL, zeroC);
+            mat[i - 1][0] = jogadas[i];
+            mat[i - 1][1] = this.contaPecas(tabAux);
+        }
+
+        bubbleJogadas(mat);
+        for (int i = 1; i < aux; i++) {
+            jogs.add(mat[i - 1][0]);
+        }
+
+        return jogs;
+    }
+
+    private int contaPecas(int[][] tabAux) {
+        int num = 0;
+        for (int i = 0; i < this.lin; i++) {
+            for (int j = 0; j < this.col; j++) {
+                if(tabAux[i][j] != i*this.col + j && tabAux[i][j] != -1){
+                    num++;
+                }
+            }
+        }
+        return num;
     }
 }
