@@ -15,6 +15,7 @@ public class Tabuleiro {
 
     private final int[][] tab;
     private final ArrayList<Integer> jogadas;
+    private Tabuleiro pai;
 
     public Tabuleiro(int[][] tab, ArrayList<Integer> jogadas) {
         this.tab = tab;
@@ -39,5 +40,20 @@ public class Tabuleiro {
             return -1;
         }
     }
-
+    
+    public void setPai(Tabuleiro pai){
+        this.pai = pai;
+    }
+    
+    public Tabuleiro getPai(){
+        return this.pai;
+    }
+    
+    public int[][] getTab(){
+        return this.tab;
+    }
+    
+    public ArrayList<Integer> getJogadas(){
+        return this.jogadas;
+    }
 }
