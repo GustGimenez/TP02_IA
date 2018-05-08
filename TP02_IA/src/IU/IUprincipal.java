@@ -20,7 +20,6 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private ViewPanel view;
     private Resolve resolve;
-    private boolean embaralhado; // Informa se o usuário inicializou o tabuleiro
     private boolean inicializado; // Informa se o usuário embaralhou o tabuleiro
 
     /**
@@ -28,7 +27,6 @@ public class IUprincipal extends javax.swing.JFrame {
      */
     public IUprincipal() {
         this.view = new ViewPanel();
-        this.embaralhado = false;
         this.inicializado = false;
         initComponents();
     }
@@ -138,7 +136,6 @@ public class IUprincipal extends javax.swing.JFrame {
         this.resolve = new Resolve(dimensao, dimensao);
         this.view.setTab(this.resolve);
         this.inicializado = true;
-        this.embaralhado = false;
         this.Panel.repaint();
     }//GEN-LAST:event_Iniciar_tab_menuActionPerformed
 
@@ -147,7 +144,6 @@ public class IUprincipal extends javax.swing.JFrame {
             int movimentos = Integer.valueOf(JOptionPane.showInputDialog("Insira o número de movimentos"));
             this.resolve.embaralha(movimentos);
             this.view.setTab(resolve);
-            this.embaralhado = true;
             this.view.repaint();
         } else {
             JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
@@ -156,14 +152,10 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Cega_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Cega_menuActionPerformed
         if (this.inicializado) {
-            if (this.embaralhado) {
-                this.resolve.buscaCega();
-                this.view.setTab(this.resolve);
-                this.embaralhado = false;
-                this.view.repaint();
-            } else {
-                JOptionPane.showMessageDialog(this, "Embaralhe o tabuleiro!");
-            }
+            this.resolve.buscaCega();
+            this.view.setTab(this.resolve);
+            this.view.repaint();
+
         } else {
             JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
         }
@@ -171,14 +163,9 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Heuristica1_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Heuristica1_menuActionPerformed
         if (this.inicializado) {
-            if (this.embaralhado) {
-                this.resolve.buscaH1();
-                this.view.setTab(this.resolve);
-                this.embaralhado = false;
-                this.view.repaint();
-            } else {
-                JOptionPane.showMessageDialog(this, "Embaralhe o tabuleiro!");
-            }
+            this.resolve.buscaH1();
+            this.view.setTab(this.resolve);
+            this.view.repaint();
         } else {
             JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
         }
@@ -186,14 +173,9 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Heuristica2_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Heuristica2_menuActionPerformed
         if (this.inicializado) {
-            if (this.embaralhado) {
-                this.resolve.buscaH2();
-                this.view.setTab(this.resolve);
-                this.embaralhado = false;
-                this.view.repaint();
-            } else {
-                JOptionPane.showMessageDialog(this, "Embaralhe o tabuleiro!");
-            }
+            this.resolve.buscaH2();
+            this.view.setTab(this.resolve);
+            this.view.repaint();
         } else {
             JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
         }
@@ -201,14 +183,9 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void HPessoal_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HPessoal_menuActionPerformed
         if (this.inicializado) {
-            if (this.embaralhado) {
-                this.resolve.buscaHPessoal();
-                this.view.setTab(this.resolve);
-                this.embaralhado = false;
-                this.view.repaint();
-            } else {
-                JOptionPane.showMessageDialog(this, "Embaralhe o tabuleiro!");
-            }
+            this.resolve.buscaHPessoal();
+            this.view.setTab(this.resolve);
+            this.view.repaint();
         } else {
             JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
         }
@@ -266,10 +243,9 @@ public class IUprincipal extends javax.swing.JFrame {
             int alturaPanel = this.getHeight();
             int larguraPanel = this.getWidth();
             int[][] aux = this.tabuleiro.getTab();
-            int linhas = 3;
-            int colunas = 3;
-//            int linhas = this.tabuleiro.getlin();
-//            int colunas = this.tabuleiro.getlin();
+
+            int linhas = this.tabuleiro.getLin();
+            int colunas = this.tabuleiro.getCol();
 
             super.paintComponent(g);
             java.awt.Graphics2D g2 = (java.awt.Graphics2D) g;
@@ -287,15 +263,6 @@ public class IUprincipal extends javax.swing.JFrame {
             int larguras = larguraPanel / linhas;
             int alturas = alturaPanel / linhas;
 
-            for (int i = 1; i < linhas; i++) {
-                g2.setColor(Color.black);
-                // Desenha as colunas
-                g2.drawLine(i * larguras, 0, i * larguras, alturaPanel);
-
-                // Desenha as linhas
-                g2.drawLine(0, i * alturas, larguraPanel, i * alturas);
-            }
-
             larguras = larguraPanel / linhas;
             alturas = alturaPanel / colunas;
             g2.setStroke(new java.awt.BasicStroke(5f));
@@ -307,16 +274,23 @@ public class IUprincipal extends javax.swing.JFrame {
                     // Desenha o quadrado branco que se movimenta
                     if (aux[i][j] == -1) {
                         g2.setColor(Color.white);
-                        g2.drawRect(larguraPanel - larguras + linhas, alturaPanel - alturas + colunas,
+                        g2.fillRect(j * larguras, i * alturas,
                                 larguras, alturas);
-                        g2.fill3DRect(larguraPanel - larguras, alturaPanel - alturas,
-                                larguras, alturas, true);
                         g2.setColor(Color.black);
                         continue;
                     }
                     g2.drawString(String.valueOf(aux[i][j] + 1), (j * 2 + 1)
                             * (larguras / 2), (i * 2 + 1) * (alturas / 2));
                 }
+            }
+            g2.setStroke(new java.awt.BasicStroke(1f));
+            g2.setColor(Color.black);
+            for (int i = 1; i < linhas; i++) {
+                // Desenha as colunas
+                g2.drawLine(i * larguras, 0, i * larguras, alturaPanel);
+
+                // Desenha as linhas
+                g2.drawLine(0, i * alturas, larguraPanel, i * alturas);
             }
         }
     }
