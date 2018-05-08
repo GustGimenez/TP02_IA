@@ -143,8 +143,8 @@ public class IUprincipal extends javax.swing.JFrame {
             int alturaPanel = this.getHeight();
             int larguraPanel = this.getWidth();
             int[][] aux = this.tabuleiro.getTab();
-            int linhas = 5;
-            int colunas = 5;
+            int linhas = 3;
+            int colunas = 3;
 //            int linhas = this.tabuleiro.getlin();
 //            int colunas = this.tabuleiro.getlin();
 
@@ -176,15 +176,21 @@ public class IUprincipal extends javax.swing.JFrame {
             g2.setStroke(new java.awt.BasicStroke(5f));
             g2.setColor(Color.black);
             g2.setFont(new Font("TimesRoman", Font.PLAIN, larguras / 10));
-
+            
             for (int i = 0; i < linhas; i++) {
                 for (int j = 0; j < colunas; j++) {
+                    // Desenha o quadrado branco que se movimenta
                     if(aux[i][j] == -1){
-                        
+                        g2.setColor(Color.white);
+                        g2.drawRect(larguraPanel - larguras + linhas, alturaPanel - alturas + colunas,
+                                larguras, alturas);
+                        g2.fill3DRect(larguraPanel - larguras, alturaPanel - alturas,
+                                larguras, alturas, true);
+                        g2.setColor(Color.black);
+                        continue;
                     }
-                    
-                    g2.drawString(String.valueOf(aux[i][j]), (j * 2 + 1) * (larguras / 2),
-                            (i * 2 + 1) * (alturas / 2));
+                    g2.drawString(String.valueOf(aux[i][j] + 1), (j * 2 + 1) * 
+                            (larguras / 2), (i * 2 + 1) * (alturas / 2));
                 }
             }
         }
