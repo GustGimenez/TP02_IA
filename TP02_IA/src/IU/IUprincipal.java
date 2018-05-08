@@ -20,12 +20,16 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private ViewPanel view;
     private Resolve resolve;
+    private boolean embaralhado; // Informa se o usuário inicializou o tabuleiro
+    private boolean inicializado; // Informa se o usuário embaralhou o tabuleiro
 
     /**
      * Creates new form IUprincipal
      */
     public IUprincipal() {
         this.view = new ViewPanel();
+        this.embaralhado = false;
+        this.inicializado = false;
         initComponents();
     }
 
@@ -42,7 +46,12 @@ public class IUprincipal extends javax.swing.JFrame {
         Menu = new javax.swing.JMenuBar();
         Tab_menu = new javax.swing.JMenu();
         Iniciar_tab_menu = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        Embaralhar_menu = new javax.swing.JMenuItem();
+        Resolver_menu = new javax.swing.JMenu();
+        Cega_menu = new javax.swing.JMenuItem();
+        Heuristica1_menu = new javax.swing.JMenuItem();
+        Heuristica2_menu = new javax.swing.JMenuItem();
+        HPessoal_menu = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -56,10 +65,51 @@ public class IUprincipal extends javax.swing.JFrame {
         });
         Tab_menu.add(Iniciar_tab_menu);
 
+        Embaralhar_menu.setText("Embaralhar");
+        Embaralhar_menu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Embaralhar_menuActionPerformed(evt);
+            }
+        });
+        Tab_menu.add(Embaralhar_menu);
+
         Menu.add(Tab_menu);
 
-        jMenu2.setText("Edit");
-        Menu.add(jMenu2);
+        Resolver_menu.setText("Resolver");
+
+        Cega_menu.setText("Busca Cega");
+        Cega_menu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Cega_menuActionPerformed(evt);
+            }
+        });
+        Resolver_menu.add(Cega_menu);
+
+        Heuristica1_menu.setText("Heurística 1");
+        Heuristica1_menu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Heuristica1_menuActionPerformed(evt);
+            }
+        });
+        Resolver_menu.add(Heuristica1_menu);
+
+        Heuristica2_menu.setText("Heurística 2");
+        Heuristica2_menu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Heuristica2_menuActionPerformed(evt);
+            }
+        });
+        Resolver_menu.add(Heuristica2_menu);
+
+        HPessoal_menu.setText("Heurística Pessoal");
+        HPessoal_menu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HPessoal_menuActionPerformed(evt);
+            }
+        });
+        Resolver_menu.add(HPessoal_menu);
+
+        Menu.add(Resolver_menu);
 
         setJMenuBar(Menu);
 
@@ -87,9 +137,82 @@ public class IUprincipal extends javax.swing.JFrame {
         int dimensao = Integer.valueOf(JOptionPane.showInputDialog("Insira qual a dimensão do tabuleiro"));
         this.resolve = new Resolve(dimensao, dimensao);
         this.view.setTab(this.resolve);
-        this.view.setBackground(Color.lightGray);
+        this.inicializado = true;
+        this.embaralhado = false;
         this.Panel.repaint();
     }//GEN-LAST:event_Iniciar_tab_menuActionPerformed
+
+    private void Embaralhar_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Embaralhar_menuActionPerformed
+        if (this.inicializado) {
+            int movimentos = Integer.valueOf(JOptionPane.showInputDialog("Insira o número de movimentos"));
+            this.resolve.embaralha(movimentos);
+            this.view.setTab(resolve);
+            this.embaralhado = true;
+            this.view.repaint();
+        } else {
+            JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
+        }
+    }//GEN-LAST:event_Embaralhar_menuActionPerformed
+
+    private void Cega_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Cega_menuActionPerformed
+        if (this.inicializado) {
+            if (this.embaralhado) {
+                this.resolve.buscaCega();
+                this.view.setTab(this.resolve);
+                this.embaralhado = false;
+                this.view.repaint();
+            } else {
+                JOptionPane.showMessageDialog(this, "Embaralhe o tabuleiro!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
+        }
+    }//GEN-LAST:event_Cega_menuActionPerformed
+
+    private void Heuristica1_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Heuristica1_menuActionPerformed
+        if (this.inicializado) {
+            if (this.embaralhado) {
+                this.resolve.buscaH1();
+                this.view.setTab(this.resolve);
+                this.embaralhado = false;
+                this.view.repaint();
+            } else {
+                JOptionPane.showMessageDialog(this, "Embaralhe o tabuleiro!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
+        }
+    }//GEN-LAST:event_Heuristica1_menuActionPerformed
+
+    private void Heuristica2_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Heuristica2_menuActionPerformed
+        if (this.inicializado) {
+            if (this.embaralhado) {
+                this.resolve.buscaH2();
+                this.view.setTab(this.resolve);
+                this.embaralhado = false;
+                this.view.repaint();
+            } else {
+                JOptionPane.showMessageDialog(this, "Embaralhe o tabuleiro!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
+        }
+    }//GEN-LAST:event_Heuristica2_menuActionPerformed
+
+    private void HPessoal_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HPessoal_menuActionPerformed
+        if (this.inicializado) {
+            if (this.embaralhado) {
+                this.resolve.buscaHPessoal();
+                this.view.setTab(this.resolve);
+                this.embaralhado = false;
+                this.view.repaint();
+            } else {
+                JOptionPane.showMessageDialog(this, "Embaralhe o tabuleiro!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
+        }
+    }//GEN-LAST:event_HPessoal_menuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -151,6 +274,8 @@ public class IUprincipal extends javax.swing.JFrame {
             super.paintComponent(g);
             java.awt.Graphics2D g2 = (java.awt.Graphics2D) g;
 
+            this.setBackground(Color.lightGray);
+
             // configuração do rendering para obeter melhor qualidade
             g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -176,11 +301,11 @@ public class IUprincipal extends javax.swing.JFrame {
             g2.setStroke(new java.awt.BasicStroke(5f));
             g2.setColor(Color.black);
             g2.setFont(new Font("TimesRoman", Font.PLAIN, larguras / 10));
-            
+
             for (int i = 0; i < linhas; i++) {
                 for (int j = 0; j < colunas; j++) {
                     // Desenha o quadrado branco que se movimenta
-                    if(aux[i][j] == -1){
+                    if (aux[i][j] == -1) {
                         g2.setColor(Color.white);
                         g2.drawRect(larguraPanel - larguras + linhas, alturaPanel - alturas + colunas,
                                 larguras, alturas);
@@ -189,18 +314,23 @@ public class IUprincipal extends javax.swing.JFrame {
                         g2.setColor(Color.black);
                         continue;
                     }
-                    g2.drawString(String.valueOf(aux[i][j] + 1), (j * 2 + 1) * 
-                            (larguras / 2), (i * 2 + 1) * (alturas / 2));
+                    g2.drawString(String.valueOf(aux[i][j] + 1), (j * 2 + 1)
+                            * (larguras / 2), (i * 2 + 1) * (alturas / 2));
                 }
             }
         }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem Cega_menu;
+    private javax.swing.JMenuItem Embaralhar_menu;
+    private javax.swing.JMenuItem HPessoal_menu;
+    private javax.swing.JMenuItem Heuristica1_menu;
+    private javax.swing.JMenuItem Heuristica2_menu;
     private javax.swing.JMenuItem Iniciar_tab_menu;
     private javax.swing.JMenuBar Menu;
     private javax.swing.JScrollPane Panel;
+    private javax.swing.JMenu Resolver_menu;
     private javax.swing.JMenu Tab_menu;
-    private javax.swing.JMenu jMenu2;
     // End of variables declaration//GEN-END:variables
 }
