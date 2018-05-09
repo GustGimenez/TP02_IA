@@ -16,6 +16,7 @@ import java.util.Random;
 public class Resolve {
 
     private final int[][] tab;
+    private final int[][] reserva;
     private int zeroL;
     private int zeroC;
     private int numJogadas;
@@ -56,6 +57,7 @@ public class Resolve {
 
     public Resolve(int lin, int col) {
         this.tab = new int[lin][col];
+        this.reserva = new int[lin][col];
         this.lin = lin;
         this.col = col;
         this.resetTab();
@@ -192,8 +194,6 @@ public class Resolve {
 
         }
         this.result = atual;
-        int passos = this.getPassos(atual);
-        System.out.println("Passos: " + passos + "\nIt: " + this.numJogadas);
 
     }
 
@@ -249,8 +249,6 @@ public class Resolve {
         }
 
         this.result = atual;
-        int passos = this.getPassos(atual);
-        System.out.println("Passos: " + passos + "\nIt: " + this.numJogadas);
 
     }
 
@@ -304,8 +302,6 @@ public class Resolve {
 
         }
         this.result = atual;
-        int passos = this.getPassos(atual);
-        System.out.println("Passos: " + passos + "\nIt: " + this.numJogadas);
 
     
     }
@@ -422,10 +418,10 @@ public class Resolve {
         }
     }
 
-    private int getPassos(Tabuleiro atual) {
-        int num = 0;
-        while (atual != null) {
-            atual = atual.getPai();
+    public int getPassos() {
+        int num = -1;
+        while (this.result != null) {
+            this.result = this.result.getPai();
             num++;
         }
         return num;
@@ -525,5 +521,36 @@ public class Resolve {
             }
         }
         return num;
+    }
+
+    public void jogaClique(int i, int j) {
+        if(i == this.zeroL){
+            while (j != zeroC){
+                if(j > zeroC){
+                    this.fazJogada(this.DIREITA, tab, zeroL, zeroC);
+                }else{
+                    this.fazJogada(this.ESQUERDA, tab, zeroL, zeroC);
+                }
+                this.atualizaZero();
+            }
+        } else if(j == this.zeroC){
+            while (i != zeroL){
+                if(i > zeroL){
+                    this.fazJogada(this.BAIXO, tab, zeroL, zeroC);
+                }else{
+                    this.fazJogada(this.CIMA, tab, zeroL, zeroC);
+                }
+                this.atualizaZero();
+            }
+        }
+    }
+    
+    public void salvaReserva(){
+        this.copyArray(tab, reserva);
+    }
+    
+    public void recuperaReserva(){
+        this.copyArray(reserva, tab);
+        this.atualizaZero();
     }
 }
