@@ -318,6 +318,7 @@ public class Resolve {
             this.fazJogada(jogadas[auxJog], this.tab, this.zeroL, this.zeroC);
             this.atualizaZero(jogadas[auxJog]);
         }
+        this.numJogadas = 0;
     }
 
     public final void resetTab() {
@@ -524,7 +525,7 @@ public class Resolve {
         return num;
     }
 
-    public void jogaClique(int i, int j) {
+    public boolean jogaClique(int i, int j) {
         if(i == this.zeroL){
             while (j != zeroC){
                 if(j > zeroC){
@@ -533,6 +534,7 @@ public class Resolve {
                     this.fazJogada(this.ESQUERDA, tab, zeroL, zeroC);
                 }
                 this.atualizaZero();
+                this.numJogadas++;
             }
         } else if(j == this.zeroC){
             while (i != zeroL){
@@ -542,8 +544,10 @@ public class Resolve {
                     this.fazJogada(this.CIMA, tab, zeroL, zeroC);
                 }
                 this.atualizaZero();
+                this.numJogadas++;
             }
         }
+        return this.verificaFim();
     }
     
     public void salvaReserva(){
@@ -553,5 +557,9 @@ public class Resolve {
     public void recuperaReserva(){
         this.copyArray(reserva, tab);
         this.atualizaZero();
+    }
+
+    public void resetJogadas() {
+        this.numJogadas = 0;
     }
 }
