@@ -61,6 +61,7 @@ public class Resolve {
         this.lin = lin;
         this.col = col;
         this.resetTab();
+        this.copyArray(this.tab, this.reserva);
     }
 
     private void getJogadas(int[] jogadas, int zeroL, int zeroC) {
@@ -153,7 +154,7 @@ public class Resolve {
         int[][] arrayAux = new int[this.lin][this.col];
         this.copyArray(tab, arrayAux);
         Tabuleiro anterior = null;
-        Tabuleiro atual = new Tabuleiro(arrayAux, this.ordenaJogadas(jogadas));
+        Tabuleiro atual = new Tabuleiro(arrayAux, this.ordenaJogadasH1(jogadas));
         tabs.add(atual);
         atual.setPai(null);
 
@@ -187,7 +188,7 @@ public class Resolve {
             }
             this.getJogadas(jogadas, this.zeroL, this.zeroC);
             if (atual == null) {
-                atual = new Tabuleiro(arrayAux, this.ordenaJogadas(jogadas));
+                atual = new Tabuleiro(arrayAux, this.ordenaJogadasH1(jogadas));
                 atual.setPai(anterior);
                 tabs.add(atual);
             }
@@ -362,13 +363,13 @@ public class Resolve {
         }
     }
 
-    public void copyArray(int[][] array, int[][] arrayCpy) {
+    public final void copyArray(int[][] array, int[][] arrayCpy) {
         for (int i = 0; i < array.length; i++) {
             System.arraycopy(array[i], 0, arrayCpy[i], 0, array[i].length);
         }
     }
 
-    private ArrayList<Integer> ordenaJogadas(int[] jogadas) {
+    private ArrayList<Integer> ordenaJogadasH1(int[] jogadas) {
         ArrayList<Integer> jogs = new ArrayList();
         int aux = jogadas[0];
         int[][] mat = new int[aux - 1][2];
@@ -475,7 +476,7 @@ public class Resolve {
         return jogs;
     }
 
-    private int[] getZero(int[][] tab) {
+    private int[] getZero(int[][] tab) { // Recupera as coordenadas da peça branca
         int[] coords = new int[2];
 
         for (int i = 0; i < this.lin; i++) {
