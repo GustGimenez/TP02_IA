@@ -27,7 +27,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="Salva_tab_menu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Salva Tabuleiro"/>
+                <Property name="text" type="java.lang.String" value="Salvar Tabuleiro"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Salva_tab_menuActionPerformed"/>
@@ -35,7 +35,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="Recupera_tab_menu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Recupera Tabuleiro"/>
+                <Property name="text" type="java.lang.String" value="Recuperar Tabuleiro"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Recupera_tab_menuActionPerformed"/>

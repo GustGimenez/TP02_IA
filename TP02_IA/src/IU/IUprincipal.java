@@ -151,7 +151,7 @@ public class IUprincipal extends javax.swing.JFrame {
         });
         Tab_menu.add(Embaralhar_menu);
 
-        Salva_tab_menu.setText("Salva Tabuleiro");
+        Salva_tab_menu.setText("Salvar Tabuleiro");
         Salva_tab_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Salva_tab_menuActionPerformed(evt);
@@ -159,7 +159,7 @@ public class IUprincipal extends javax.swing.JFrame {
         });
         Tab_menu.add(Salva_tab_menu);
 
-        Recupera_tab_menu.setText("Recupera Tabuleiro");
+        Recupera_tab_menu.setText("Recuperar Tabuleiro");
         Recupera_tab_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Recupera_tab_menuActionPerformed(evt);
