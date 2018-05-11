@@ -23,11 +23,16 @@ public class Resolve {
     private final int lin;
     private final int col;
     private Tabuleiro result;
+    private boolean h2Adapt;
 
     private final int CIMA = 0;
     private final int BAIXO = 1;
     private final int DIREITA = 2;
     private final int ESQUERDA = 3;
+
+    public void setH2Adapt(boolean h2Adapt) {
+        this.h2Adapt = h2Adapt;
+    }
 
     public int[][] getTab() {
         return tab;
@@ -52,8 +57,6 @@ public class Resolve {
     public int getCol() {
         return col;
     }
-    
-    
 
     public Resolve(int lin, int col) {
         this.tab = new int[lin][col];
@@ -208,7 +211,12 @@ public class Resolve {
         int[][] arrayAux = new int[this.lin][this.col];
         this.copyArray(tab, arrayAux);
         Tabuleiro anterior;
-        Tabuleiro atual = new Tabuleiro(arrayAux, this.ordenaJogadasH2(jogadas));
+        Tabuleiro atual;
+        if (this.h2Adapt) {
+            atual = new Tabuleiro(arrayAux, this.ordenaJogadasH2Adaptado(jogadas));
+        } else {
+            atual = new Tabuleiro(arrayAux, this.ordenaJogadasH2(jogadas));
+        }
         tabs.add(atual);
         atual.setPai(null);
 
@@ -242,7 +250,11 @@ public class Resolve {
             }
             this.getJogadas(jogadas, this.zeroL, this.zeroC);
             if (atual == null) {
-                atual = new Tabuleiro(arrayAux, this.ordenaJogadasH2(jogadas));
+                if (this.h2Adapt) {
+                    atual = new Tabuleiro(arrayAux, this.ordenaJogadasH2Adaptado(jogadas));
+                } else {
+                    atual = new Tabuleiro(arrayAux, this.ordenaJogadasH2(jogadas));
+                }
                 atual.setPai(anterior);
                 tabs.add(atual);
             }
@@ -304,7 +316,6 @@ public class Resolve {
         }
         this.result = atual;
 
-    
     }
 
     public void embaralha(int num) {
@@ -332,27 +343,42 @@ public class Resolve {
         this.tab[this.zeroC][this.zeroL] = -1;
     }
 
-    private void fazJogada(int jog, int[][] tab, int zeroL, int zeroC) {
+    private boolean fazJogada(int jog, int[][] tab, int zeroL, int zeroC) {
         int aux;
+        boolean fezJog = false;
+
         aux = tab[zeroL][zeroC];
         switch (jog) {
             case CIMA:
-                tab[zeroL][zeroC] = tab[zeroL - 1][zeroC];
-                tab[--zeroL][zeroC] = aux;
+                if (zeroL > 0) {
+                    tab[zeroL][zeroC] = tab[zeroL - 1][zeroC];
+                    tab[--zeroL][zeroC] = aux;
+                    fezJog = true;
+                }
                 break;
             case BAIXO:
-                tab[zeroL][zeroC] = tab[zeroL + 1][zeroC];
-                tab[++zeroL][zeroC] = aux;
+                if (zeroL < this.lin - 1) {
+                    tab[zeroL][zeroC] = tab[zeroL + 1][zeroC];
+                    tab[++zeroL][zeroC] = aux;
+                    fezJog = true;
+                }
                 break;
             case DIREITA:
-                tab[zeroL][zeroC] = tab[zeroL][zeroC + 1];
-                tab[zeroL][++zeroC] = aux;
+                if (zeroC < this.col - 1) {
+                    tab[zeroL][zeroC] = tab[zeroL][zeroC + 1];
+                    tab[zeroL][++zeroC] = aux;
+                    fezJog = true;
+                }
                 break;
             case ESQUERDA:
-                tab[zeroL][zeroC] = tab[zeroL][zeroC - 1];
-                tab[zeroL][--zeroC] = aux;
+                if (zeroC > 0) {
+                    tab[zeroL][zeroC] = tab[zeroL][zeroC - 1];
+                    tab[zeroL][--zeroC] = aux;
+                    fezJog = true;
+                }
                 break;
         }
+        return fezJog;
     }
 
     public void exibe() {
@@ -429,6 +455,60 @@ public class Resolve {
         return num;
     }
 
+    private ArrayList<Integer> ordenaJogadasH2Adaptado(int[] jogadas) {
+        ArrayList<Integer> jogs = new ArrayList();
+        int aux = jogadas[0]; // Numero de jogadas +1
+        int jogInv;
+        int[][] mat = new int[aux - 1][2]; // Matriz que ajuda organizar jogadas
+        int[][] tabAux = new int[this.lin][this.col];  // Tabuleiro que simulará a primeira jogada
+        int[][] tabAux2 = new int[this.lin][this.col];   // Tabuleiro que simulará a segunda jogada
+        int[] zeroLC;// Coordenadas do zero apos a primeira jogada
+        int[] jogadasAux = new int[5]; // Vetor com os possiveis movimentos para segunda jogada
+        int min, minAux; //auxiliares para calcular o menor valor da segunda jogada
+
+        for (int i = 1; i < aux; i++) {
+            //Uma jogada a frente
+            this.copyArray(this.tab, tabAux); // Copia pra não perder o tabuleiro
+            this.fazJogada(jogadas[i], tabAux, zeroL, zeroC); // simula um movimento
+            jogInv = this.getInv(jogadas[i]);
+            if (this.verificaDistancia(tabAux) == 0) { //verifica se o movimento gerá uma solução
+                mat[i - 1][0] = jogadas[i];
+                mat[i - 1][1] = 0;
+                continue;
+            }
+
+            zeroLC = this.getZero(tabAux); // pega coordenadas do zero no tabuleiro após a jogada
+            this.getJogadas(jogadasAux, zeroLC[0], zeroLC[1]); // Verifica quais movimentos estão disponíveis
+            //Duas jogadas A frente
+            min = Integer.MAX_VALUE;
+            for (int j = 1; j < jogadasAux[0]; j++) {
+
+                this.copyArray(tabAux, tabAux2); // copia para não perder tabuleiro
+                if (jogadasAux[j] != jogInv) {
+                    this.fazJogada(jogadasAux[j], tabAux2, zeroLC[0], zeroLC[1]); // simula um movimento
+                    minAux = this.verificaDistancia(tabAux2); // verifica a distancia do tabuleiro após duas jogadas
+                } else {
+                    minAux = Integer.MAX_VALUE;
+                }
+
+                if (minAux < min) { // Armazena o melhor resultado que esse tabuleiro pode atingir
+                    min = minAux;
+                }
+            }
+            mat[i - 1][0] = jogadas[i]; // Armazena a jogada
+            mat[i - 1][1] = min; // melhor resultados após 2 movimentos da jogada acima
+        }
+
+        bubbleJogadas(mat); // ordena jogadas
+
+        //Adiciona no arraylist
+        for (int i = 1; i < aux; i++) {
+            jogs.add(mat[i - 1][0]);
+        }
+
+        return jogs;
+    }
+
     private ArrayList<Integer> ordenaJogadasH2(int[] jogadas) {
         ArrayList<Integer> jogs = new ArrayList();
         int aux = jogadas[0]; // Numero de jogadas +1
@@ -456,6 +536,7 @@ public class Resolve {
             for (int j = 1; j < jogadasAux[0]; j++) {
 
                 this.copyArray(tabAux, tabAux2); // copia para não perder tabuleiro
+
                 this.fazJogada(jogadasAux[j], tabAux2, zeroLC[0], zeroLC[1]); // simula um movimento
                 minAux = this.verificaDistancia(tabAux2); // verifica a distancia do tabuleiro após duas jogadas
 
@@ -517,7 +598,7 @@ public class Resolve {
         int num = 0;
         for (int i = 0; i < this.lin; i++) {
             for (int j = 0; j < this.col; j++) {
-                if(tabAux[i][j] != i*this.col + j && tabAux[i][j] != -1){
+                if (tabAux[i][j] != i * this.col + j && tabAux[i][j] != -1) {
                     num++;
                 }
             }
@@ -526,40 +607,65 @@ public class Resolve {
     }
 
     public boolean jogaClique(int i, int j) {
-        if(i == this.zeroL){
-            while (j != zeroC){
-                if(j > zeroC){
+        if (i == this.zeroL) {
+            while (j != zeroC) {
+                if (j > zeroC) {
                     this.fazJogada(this.DIREITA, tab, zeroL, zeroC);
-                }else{
+                } else {
                     this.fazJogada(this.ESQUERDA, tab, zeroL, zeroC);
                 }
                 this.atualizaZero();
                 this.numJogadas++;
             }
-        } else if(j == this.zeroC){
-            while (i != zeroL){
-                if(i > zeroL){
+            return true;
+        } else if (j == this.zeroC) {
+            while (i != zeroL) {
+                if (i > zeroL) {
                     this.fazJogada(this.BAIXO, tab, zeroL, zeroC);
-                }else{
+                } else {
                     this.fazJogada(this.CIMA, tab, zeroL, zeroC);
                 }
                 this.atualizaZero();
                 this.numJogadas++;
             }
+            return true;
         }
-        return this.verificaFim();
+        return false;
+
     }
-    
-    public void salvaReserva(){
+
+    public void salvaReserva() {
         this.copyArray(tab, reserva);
     }
-    
-    public void recuperaReserva(){
+
+    public void recuperaReserva() {
         this.copyArray(reserva, tab);
         this.atualizaZero();
     }
 
     public void resetJogadas() {
         this.numJogadas = 0;
+    }
+
+    public void fazJogada(int i) {
+        if (this.fazJogada(i, tab, zeroL, zeroC)) {
+            this.numJogadas++;
+        }
+        this.atualizaZero();
+    }
+
+    private int getInv(int jogada) {
+        switch (jogada) {
+            case CIMA:
+                return BAIXO;
+            case BAIXO:
+                return this.CIMA;
+            case DIREITA:
+                return this.ESQUERDA;
+            case ESQUERDA:
+                return this.DIREITA;
+            default:
+                return -1;
+        }
     }
 }
