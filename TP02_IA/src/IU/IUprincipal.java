@@ -6,6 +6,7 @@
 package IU;
 
 import codigos.Resolve;
+import com.sun.glass.events.KeyEvent;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
@@ -72,10 +73,16 @@ public class IUprincipal extends javax.swing.JFrame {
         Cega_menu = new javax.swing.JMenuItem();
         Heuristica1_menu = new javax.swing.JMenuItem();
         Heuristica2_menu = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         HPessoal_menu = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 650));
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         Panel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -204,7 +211,16 @@ public class IUprincipal extends javax.swing.JFrame {
         });
         Resolver_menu.add(Heuristica2_menu);
 
-        HPessoal_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setText("Heurística 2 - Adaptada");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        Resolver_menu.add(jMenuItem1);
+
+        HPessoal_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
         HPessoal_menu.setText("Heurística Pessoal");
         HPessoal_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -303,6 +319,7 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Heuristica2_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Heuristica2_menuActionPerformed
         if (this.inicializado) {
+            this.resolve.setH2Adapt(false);
             this.resolve.buscaH2();
             this.NomeAlgLabel.setText("Heurística 2");
             this.NumItLabel.setText(String.valueOf(this.resolve.getNumJogadas()));
@@ -336,13 +353,13 @@ public class IUprincipal extends javax.swing.JFrame {
         Point p = this.Panel.getMousePosition();
         int i = p.y / alturas;
         int j = p.x / larguras;
-        boolean fim = this.resolve.jogaClique(i, j);
+        boolean fezJog = this.resolve.jogaClique(i, j);
         if (!this.embaralhado) {
             this.resolve.resetJogadas();
             this.embaralhado = true;
         }
         this.Panel.repaint();
-        if (fim) {
+        if (fezJog && this.resolve.verificaFim()) {
             JOptionPane.showMessageDialog(this, "Você resolveu em " + this.resolve.getNumJogadas() + " jogada(s)!");
             this.embaralhado = false;
         }
@@ -360,6 +377,50 @@ public class IUprincipal extends javax.swing.JFrame {
             this.resolve.salvaReserva();
         }
     }//GEN-LAST:event_Salva_tab_menuActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        if (!this.inicializado) {
+            return;
+        }
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_RIGHT:
+                this.resolve.fazJogada(3);
+                break;
+            case KeyEvent.VK_LEFT:
+                this.resolve.fazJogada(2);
+                break;
+            case KeyEvent.VK_UP:
+                this.resolve.fazJogada(1);
+                break;
+            case KeyEvent.VK_DOWN:
+                this.resolve.fazJogada(0);
+                break;
+            default: return;
+        }
+        this.Panel.repaint();
+        if (!this.embaralhado) {
+            this.resolve.resetJogadas();
+            this.embaralhado = true;
+        } else if (this.resolve.verificaFim()) {
+            JOptionPane.showMessageDialog(this, "Você resolveu em " + this.resolve.getNumJogadas() + " jogada(s)!");
+            this.embaralhado = false;
+        }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        if (this.inicializado) {
+            this.resolve.setH2Adapt(true);
+            this.resolve.buscaH2();
+            this.NomeAlgLabel.setText("Heurística 2 - Adaptado");
+            this.NumItLabel.setText(String.valueOf(this.resolve.getNumJogadas()));
+            this.NumJogLabel.setText(String.valueOf(this.resolve.getPassos()));
+            this.view.setTab(this.resolve);
+            this.embaralhado = false;
+            this.view.repaint();
+        } else {
+            JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
+        }
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -499,6 +560,7 @@ public class IUprincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
