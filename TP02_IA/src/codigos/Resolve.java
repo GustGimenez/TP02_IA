@@ -435,8 +435,9 @@ public class Resolve {
 
     public int getPassos() {
         int num = -1;
-        while (this.result != null) {
-            this.result = this.result.getPai();
+        Tabuleiro aux = this.result;
+        while (aux != null) {
+            aux = aux.getPai();
             num++;
         }
         return num;
@@ -600,5 +601,28 @@ public class Resolve {
             default:
                 return -1;
         }
+    }
+
+    public Tabuleiro setCam(Tabuleiro tab) {
+       if(tab.getPai() == null){
+           this.result = tab;
+           return tab;
+       }
+       Tabuleiro aux = setCam(tab.getPai());
+       aux.setPai(tab);
+       return tab;
+    }
+
+    public void setCam() {
+        this.setCam(this.result).setPai(null);
+    }
+
+    public Tabuleiro getResult() {
+        return this.result;
+    }
+
+    public void setTab(int[][] tab) {
+        this.copyArray(tab, this.tab);
+        this.atualizaZero();
     }
 }
