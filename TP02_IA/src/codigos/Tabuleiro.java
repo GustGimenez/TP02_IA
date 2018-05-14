@@ -56,4 +56,5 @@ public class Tabuleiro {
     public ArrayList<Integer> getJogadas(){
         return this.jogadas;
     }
+
 }

@@ -6,11 +6,14 @@
 package IU;
 
 import codigos.Resolve;
+import codigos.Tabuleiro;
 import com.sun.glass.events.KeyEvent;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +23,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  *
@@ -31,8 +35,10 @@ public class IUprincipal extends javax.swing.JFrame {
     private Resolve resolve;
     private boolean inicializado; // Informa se o usuário embaralhou o tabuleiro
     private boolean embaralhado;
+    private boolean exibe;
     private int larguras;
     private int alturas;
+    private Timer timer;
 
     /**
      * Creates new form IUprincipal
@@ -41,6 +47,7 @@ public class IUprincipal extends javax.swing.JFrame {
         this.view = new ViewPanel();
         this.inicializado = false;
         this.embaralhado = false;
+        this.exibe = false;
         initComponents();
         this.setTitle("Projeto IA - 2018");
 
@@ -74,6 +81,8 @@ public class IUprincipal extends javax.swing.JFrame {
         Heuristica1_menu = new javax.swing.JMenuItem();
         Heuristica2_menu = new javax.swing.JMenuItem();
         HPessoal_menu = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        Exibe_Menu = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 650));
@@ -225,6 +234,20 @@ public class IUprincipal extends javax.swing.JFrame {
 
         Menu.add(Resolver_menu);
 
+        jMenu1.setText("Solução");
+
+        Exibe_Menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        Exibe_Menu.setText("Exibir solução");
+        Exibe_Menu.setToolTipText("Mostra o passo a passo da solução de uma heurística");
+        Exibe_Menu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Exibe_MenuActionPerformed(evt);
+            }
+        });
+        jMenu1.add(Exibe_Menu);
+
+        Menu.add(jMenu1);
+
         setJMenuBar(Menu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -290,6 +313,7 @@ public class IUprincipal extends javax.swing.JFrame {
             this.NumJogLabel.setText(String.valueOf(this.resolve.getNumJogadas()));
             this.view.setTab(this.resolve);
             this.embaralhado = false;
+            this.exibe = false;
             this.view.repaint();
 
         } else {
@@ -305,6 +329,8 @@ public class IUprincipal extends javax.swing.JFrame {
             this.NumJogLabel.setText(String.valueOf(this.resolve.getPassos()));
             this.view.setTab(this.resolve);
             this.embaralhado = false;
+            this.exibe = true;
+            this.resolve.setCam();
             this.view.repaint();
         } else {
             JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
@@ -319,6 +345,8 @@ public class IUprincipal extends javax.swing.JFrame {
             this.NumJogLabel.setText(String.valueOf(this.resolve.getPassos()));
             this.view.setTab(this.resolve);
             this.embaralhado = false;
+            this.exibe = true;
+            this.resolve.setCam();
             this.view.repaint();
         } else {
             JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
@@ -333,6 +361,8 @@ public class IUprincipal extends javax.swing.JFrame {
             this.NumJogLabel.setText(String.valueOf(this.resolve.getPassos()));
             this.view.setTab(this.resolve);
             this.embaralhado = false;
+            this.exibe = true;
+            this.resolve.setCam();
             this.view.repaint();
         } else {
             JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
@@ -388,7 +418,8 @@ public class IUprincipal extends javax.swing.JFrame {
             case KeyEvent.VK_DOWN:
                 this.resolve.fazJogada(0);
                 break;
-            default: return;
+            default:
+                return;
         }
         this.Panel.repaint();
         if (!this.embaralhado) {
@@ -399,6 +430,23 @@ public class IUprincipal extends javax.swing.JFrame {
             this.embaralhado = false;
         }
     }//GEN-LAST:event_formKeyPressed
+
+    private void Exibe_MenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Exibe_MenuActionPerformed
+        if (this.exibe) {
+            this.pintaCam();
+        }else{
+            JOptionPane.showMessageDialog(this, "Execute uma busca com heurística para ver a solução!");
+        }
+    }//GEN-LAST:event_Exibe_MenuActionPerformed
+
+    private synchronized void pintaCam() {
+
+        Tabuleiro aux = this.resolve.getResult();
+        TimerActionListener tal = new TimerActionListener();
+        tal.setAux(aux);
+        timer = new Timer(2000, tal);
+        timer.start();
+    }
 
     /**
      * @param args the command line arguments
@@ -516,12 +564,42 @@ public class IUprincipal extends javax.swing.JFrame {
                 // Desenha as linhas
                 g2.drawLine(0, i * alturas, larguraPanel, i * alturas);
             }
+
         }
+    }
+
+    public class TimerActionListener implements ActionListener {
+
+        private Tabuleiro aux;
+
+        public Tabuleiro getAux() {
+            return aux;
+        }
+
+        public void setAux(Tabuleiro aux) {
+            this.aux = aux;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            resolve.setTab(aux.getTab());
+            Panel.updateUI();
+            aux = aux.getPai();
+            if (aux == null) {
+                paraTimer();
+            }
+        }
+
+    }
+
+    public void paraTimer() {
+        timer.stop();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem Cega_menu;
     private javax.swing.JMenuItem Embaralhar_menu;
+    private javax.swing.JMenuItem Exibe_Menu;
     private javax.swing.JMenuItem HPessoal_menu;
     private javax.swing.JMenuItem Heuristica1_menu;
     private javax.swing.JMenuItem Heuristica2_menu;
@@ -538,6 +616,7 @@ public class IUprincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
