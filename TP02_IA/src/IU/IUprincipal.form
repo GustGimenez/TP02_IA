@@ -15,6 +15,7 @@
                   <KeyStroke key="Ctrl+O"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Iniciar Tabuleiro"/>
+                <Property name="toolTipText" type="java.lang.String" value="Cria um tabuleiro na dimens&#xe3;o informada"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Iniciar_tab_menuActionPerformed"/>
@@ -26,6 +27,7 @@
                   <KeyStroke key="Alt+S"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Embaralhar"/>
+                <Property name="toolTipText" type="java.lang.String" value="Realiza movimentos aleat&#xf3;rios"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Embaralhar_menuActionPerformed"/>
@@ -37,6 +39,7 @@
                   <KeyStroke key="Ctrl+S"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Salvar Tabuleiro"/>
+                <Property name="toolTipText" type="java.lang.String" value="Armazena o estado atual do tabuleiro"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Salva_tab_menuActionPerformed"/>
@@ -48,6 +51,7 @@
                   <KeyStroke key="Ctrl+R"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Recuperar Tabuleiro"/>
+                <Property name="toolTipText" type="java.lang.String" value="Recupera estado do tabuleiro armazenado"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Recupera_tab_menuActionPerformed"/>

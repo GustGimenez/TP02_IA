@@ -145,6 +145,7 @@ public class IUprincipal extends javax.swing.JFrame {
 
         Iniciar_tab_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         Iniciar_tab_menu.setText("Iniciar Tabuleiro");
+        Iniciar_tab_menu.setToolTipText("Cria um tabuleiro na dimensão informada");
         Iniciar_tab_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Iniciar_tab_menuActionPerformed(evt);
@@ -154,6 +155,7 @@ public class IUprincipal extends javax.swing.JFrame {
 
         Embaralhar_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
         Embaralhar_menu.setText("Embaralhar");
+        Embaralhar_menu.setToolTipText("Realiza movimentos aleatórios");
         Embaralhar_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Embaralhar_menuActionPerformed(evt);
@@ -163,6 +165,7 @@ public class IUprincipal extends javax.swing.JFrame {
 
         Salva_tab_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         Salva_tab_menu.setText("Salvar Tabuleiro");
+        Salva_tab_menu.setToolTipText("Armazena o estado atual do tabuleiro");
         Salva_tab_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Salva_tab_menuActionPerformed(evt);
@@ -172,6 +175,7 @@ public class IUprincipal extends javax.swing.JFrame {
 
         Recupera_tab_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
         Recupera_tab_menu.setText("Recuperar Tabuleiro");
+        Recupera_tab_menu.setToolTipText("Recupera estado do tabuleiro armazenado");
         Recupera_tab_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Recupera_tab_menuActionPerformed(evt);
