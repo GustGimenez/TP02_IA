@@ -15,12 +15,11 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -36,6 +35,7 @@ public class IUprincipal extends javax.swing.JFrame {
     private boolean inicializado; // Informa se o usuário embaralhou o tabuleiro
     private boolean embaralhado;
     private boolean exibe;
+    private boolean apresentacao;
     private int larguras;
     private int alturas;
     private Timer timer;
@@ -47,9 +47,11 @@ public class IUprincipal extends javax.swing.JFrame {
         this.view = new ViewPanel();
         this.inicializado = false;
         this.embaralhado = false;
+        this.apresentacao = false;
         this.exibe = false;
         initComponents();
         this.setTitle("Projeto IA - 2018");
+        this.exSolLabel.setVisible(false);
 
     }
 
@@ -70,6 +72,7 @@ public class IUprincipal extends javax.swing.JFrame {
         NumItLabel = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         NumJogLabel = new javax.swing.JLabel();
+        exSolLabel = new javax.swing.JLabel();
         Menu = new javax.swing.JMenuBar();
         Tab_menu = new javax.swing.JMenu();
         Iniciar_tab_menu = new javax.swing.JMenuItem();
@@ -83,6 +86,7 @@ public class IUprincipal extends javax.swing.JFrame {
         HPessoal_menu = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         Exibe_Menu = new javax.swing.JMenuItem();
+        Stop_Menu = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 650));
@@ -112,6 +116,8 @@ public class IUprincipal extends javax.swing.JFrame {
 
         NumJogLabel.setText("---");
 
+        exSolLabel.setText("Exibindo Solução");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -120,18 +126,23 @@ public class IUprincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(NomeAlgLabel))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(NumItLabel))
+                        .addComponent(NumItLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(exSolLabel))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(NumJogLabel)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(NomeAlgLabel))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(NumJogLabel)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -148,6 +159,9 @@ public class IUprincipal extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(NumItLabel))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(exSolLabel))
         );
 
         Tab_menu.setText("Tabuleiro");
@@ -246,6 +260,15 @@ public class IUprincipal extends javax.swing.JFrame {
         });
         jMenu1.add(Exibe_Menu);
 
+        Stop_Menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        Stop_Menu.setText("Parar Exibição");
+        Stop_Menu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Stop_MenuActionPerformed(evt);
+            }
+        });
+        jMenu1.add(Stop_Menu);
+
         Menu.add(jMenu1);
 
         setJMenuBar(Menu);
@@ -275,6 +298,10 @@ public class IUprincipal extends javax.swing.JFrame {
     private void Iniciar_tab_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Iniciar_tab_menuActionPerformed
         try {
             int dimensao = Integer.valueOf(JOptionPane.showInputDialog("Insira qual a dimensão do tabuleiro"));
+            if (this.apresentacao) {
+                this.exibe = false;
+                this.paraTimer();
+            }
             if (dimensao <= 1) {
                 JOptionPane.showMessageDialog(this, "Dimensão deve ser MAIOR que 1!!");
                 return;
@@ -291,7 +318,9 @@ public class IUprincipal extends javax.swing.JFrame {
         if (this.inicializado) {
             try {
                 int movimentos = Integer.valueOf(JOptionPane.showInputDialog("Insira o número de movimentos"));
-
+                if (this.apresentacao) {
+                    this.paraTimer();
+                }
                 this.resolve.embaralha(movimentos);
                 this.view.setTab(resolve);
                 this.view.repaint();
@@ -307,6 +336,9 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Cega_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Cega_menuActionPerformed
         if (this.inicializado) {
+            if (this.apresentacao) {
+                return;
+            }
             this.resolve.buscaCega();
             this.NomeAlgLabel.setText("Busca Cega");
             this.NumItLabel.setText(String.valueOf(this.resolve.getNumJogadas()));
@@ -323,6 +355,9 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Heuristica1_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Heuristica1_menuActionPerformed
         if (this.inicializado) {
+            if (this.apresentacao) {
+                return;
+            }
             this.resolve.buscaH1();
             this.NomeAlgLabel.setText("Heurística 1");
             this.NumItLabel.setText(String.valueOf(this.resolve.getNumJogadas()));
@@ -339,6 +374,9 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Heuristica2_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Heuristica2_menuActionPerformed
         if (this.inicializado) {
+            if (this.apresentacao) {
+                return;
+            }
             this.resolve.buscaH2();
             this.NomeAlgLabel.setText("Heurística 2");
             this.NumItLabel.setText(String.valueOf(this.resolve.getNumJogadas()));
@@ -355,6 +393,9 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void HPessoal_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HPessoal_menuActionPerformed
         if (this.inicializado) {
+            if (this.apresentacao) {
+                return;
+            }
             this.resolve.buscaHPessoal();
             this.NomeAlgLabel.setText("Heurística Pessoal -  Número de peças no lugar certo");
             this.NumItLabel.setText(String.valueOf(this.resolve.getNumJogadas()));
@@ -370,7 +411,7 @@ public class IUprincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_HPessoal_menuActionPerformed
 
     private void PanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PanelMousePressed
-        if (!this.inicializado) {
+        if (!this.inicializado || this.apresentacao) {
             return;
         }
         Point p = this.Panel.getMousePosition();
@@ -390,19 +431,22 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Recupera_tab_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Recupera_tab_menuActionPerformed
         if (this.inicializado) {
+            if (this.apresentacao) {
+                this.paraTimer();
+            }
             this.resolve.recuperaReserva();
             this.Panel.repaint();
         }
     }//GEN-LAST:event_Recupera_tab_menuActionPerformed
 
     private void Salva_tab_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Salva_tab_menuActionPerformed
-        if (this.inicializado) {
+        if (this.inicializado && !this.apresentacao) {
             this.resolve.salvaReserva();
         }
     }//GEN-LAST:event_Salva_tab_menuActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        if (!this.inicializado) {
+        if (!this.inicializado || this.apresentacao) {
             return;
         }
         switch (evt.getKeyCode()) {
@@ -433,18 +477,27 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Exibe_MenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Exibe_MenuActionPerformed
         if (this.exibe) {
+            this.apresentacao = true;
             this.pintaCam();
-        }else{
+        } else {
             JOptionPane.showMessageDialog(this, "Execute uma busca com heurística para ver a solução!");
         }
     }//GEN-LAST:event_Exibe_MenuActionPerformed
 
-    private synchronized void pintaCam() {
+    private void Stop_MenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Stop_MenuActionPerformed
+        if (this.apresentacao) {
+            this.paraTimer();
+        }
+    }//GEN-LAST:event_Stop_MenuActionPerformed
 
+    private synchronized void pintaCam() {
+        this.exSolLabel.setVisible(true);
         Tabuleiro aux = this.resolve.getResult();
         TimerActionListener tal = new TimerActionListener();
-        tal.setAux(aux);
-        timer = new Timer(2000, tal);
+        tal.setAux(aux.getPai());
+        timer = new Timer(1000, tal);
+        this.resolve.setTab(aux.getTab());
+        this.Panel.repaint();
         timer.start();
     }
 
@@ -500,7 +553,8 @@ public class IUprincipal extends javax.swing.JFrame {
             if (this.tabuleiro == null) {
                 BufferedImage imagem;
                 try {
-                    imagem = ImageIO.read(new File(System.getProperty("user.dir") + "\\src\\IU\\Img\\Icon1.png"));
+                    InputStream is = getClass().getResourceAsStream("Icon1.png");
+                    imagem = ImageIO.read(is);
                     g2.drawImage(imagem, larguraPanel / 2 - 105, 75, null);
                     g2.setFont(new Font("TimesRoman", Font.BOLD, alturaPanel / 20));
                     g2.drawString("Projeto IA", larguraPanel / 2 - 60, 50);
@@ -513,7 +567,7 @@ public class IUprincipal extends javax.swing.JFrame {
                     return;
                 } catch (IOException ex) {
                     Logger.getLogger(IUprincipal.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                } 
                 return;
             }
 
@@ -593,6 +647,8 @@ public class IUprincipal extends javax.swing.JFrame {
     }
 
     public void paraTimer() {
+        this.apresentacao = false;
+        this.exSolLabel.setVisible(false);
         timer.stop();
     }
 
@@ -612,7 +668,9 @@ public class IUprincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem Recupera_tab_menu;
     private javax.swing.JMenu Resolver_menu;
     private javax.swing.JMenuItem Salva_tab_menu;
+    private javax.swing.JMenuItem Stop_Menu;
     private javax.swing.JMenu Tab_menu;
+    private javax.swing.JLabel exSolLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
