@@ -73,7 +73,6 @@ public class IUprincipal extends javax.swing.JFrame {
         Cega_menu = new javax.swing.JMenuItem();
         Heuristica1_menu = new javax.swing.JMenuItem();
         Heuristica2_menu = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
         HPessoal_menu = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -146,6 +145,7 @@ public class IUprincipal extends javax.swing.JFrame {
 
         Iniciar_tab_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         Iniciar_tab_menu.setText("Iniciar Tabuleiro");
+        Iniciar_tab_menu.setToolTipText("Cria um tabuleiro na dimensão informada");
         Iniciar_tab_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Iniciar_tab_menuActionPerformed(evt);
@@ -155,6 +155,7 @@ public class IUprincipal extends javax.swing.JFrame {
 
         Embaralhar_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
         Embaralhar_menu.setText("Embaralhar");
+        Embaralhar_menu.setToolTipText("Realiza movimentos aleatórios");
         Embaralhar_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Embaralhar_menuActionPerformed(evt);
@@ -164,6 +165,7 @@ public class IUprincipal extends javax.swing.JFrame {
 
         Salva_tab_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         Salva_tab_menu.setText("Salvar Tabuleiro");
+        Salva_tab_menu.setToolTipText("Armazena o estado atual do tabuleiro");
         Salva_tab_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Salva_tab_menuActionPerformed(evt);
@@ -173,6 +175,7 @@ public class IUprincipal extends javax.swing.JFrame {
 
         Recupera_tab_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
         Recupera_tab_menu.setText("Recuperar Tabuleiro");
+        Recupera_tab_menu.setToolTipText("Recupera estado do tabuleiro armazenado");
         Recupera_tab_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Recupera_tab_menuActionPerformed(evt);
@@ -211,16 +214,7 @@ public class IUprincipal extends javax.swing.JFrame {
         });
         Resolver_menu.add(Heuristica2_menu);
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setText("Heurística 2 - Adaptada");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
-        Resolver_menu.add(jMenuItem1);
-
-        HPessoal_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
+        HPessoal_menu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
         HPessoal_menu.setText("Heurística Pessoal");
         HPessoal_menu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -319,7 +313,6 @@ public class IUprincipal extends javax.swing.JFrame {
 
     private void Heuristica2_menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Heuristica2_menuActionPerformed
         if (this.inicializado) {
-            this.resolve.setH2Adapt(false);
             this.resolve.buscaH2();
             this.NomeAlgLabel.setText("Heurística 2");
             this.NumItLabel.setText(String.valueOf(this.resolve.getNumJogadas()));
@@ -406,21 +399,6 @@ public class IUprincipal extends javax.swing.JFrame {
             this.embaralhado = false;
         }
     }//GEN-LAST:event_formKeyPressed
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        if (this.inicializado) {
-            this.resolve.setH2Adapt(true);
-            this.resolve.buscaH2();
-            this.NomeAlgLabel.setText("Heurística 2 - Adaptado");
-            this.NumItLabel.setText(String.valueOf(this.resolve.getNumJogadas()));
-            this.NumJogLabel.setText(String.valueOf(this.resolve.getPassos()));
-            this.view.setTab(this.resolve);
-            this.embaralhado = false;
-            this.view.repaint();
-        } else {
-            JOptionPane.showMessageDialog(this, "Inicialize o tabuleiro!");
-        }
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -560,7 +538,6 @@ public class IUprincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
